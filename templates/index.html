@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div id="plot"></div>
+    <script>
+        function updatePlot() {
+            fetch('/update_plot')
+            .then(response => response.json())
+            .then(data => {
+                Plotly.extendTraces('plot', {
+                    x: [[data.current_time], [data.current_time], [data.current_time], [data.current_time]],
+                    y: [
+                        [data.cpu_percent],
+                        [data.memory_percent],
+                        [data.disc_usage_c.percent],
+                        [data.disc_usage_d.percent]  
+                    ]
+                }, [0, 1, 2, 3]);
+            });
+        }
+
+        // Initial setup
+        Plotly.newPlot('plot', [
+            { x: [], y: [], mode: 'lines', name: 'CPU Usage' },
+            { x: [], y: [], mode: 'lines', name: 'Memory Usage' },
+            { x: [], y: [], mode: 'lines', name: 'Local Drive C' },
+            { x: [], y: [], mode: 'lines', name: 'Local Drive D' }
+        ], { title: 'Real-Time PC Metrics', xaxis: { title: 'Timestamp' }, showlegend: true });
+
+        // Set interval for updates
+        setInterval(updatePlot, 2000);
+    </script>
+</body>
+</html>
